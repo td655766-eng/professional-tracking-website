@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitPro Tracking</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <nav class="site-nav">
+      <a class="brand" href="index.html">TransitPro</a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#support">Support</a>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">U.S. domestic parcel tracking</span>
+        <h1>TransitPro Express Tracking</h1>
+        <p>Track shipments across the United States with precise status updates and delivery visibility.</p>
+      </div>
+
+      <div class="hero-card">
+        <form id="trackingForm" class="tracking-form">
+          <label for="trackingInput">Tracking number</label>
+          <div class="field-row">
+            <input id="trackingInput" type="text" placeholder="e.g. TRK001" autocomplete="off" />
+            <button type="submit">Track</button>
+          </div>
+          <p class="hint">Valid examples: TRK001, TRK002, TRK003, TRK004</p>
+        </form>
+
+        <div id="statusResult" class="status-card">
+          <p class="status-empty">Enter a tracking number and press Track to view details on the next page.</p>
+        </div>
+      </div>
+    </header>
+
+    <section id="features" class="features">
+      <article class="feature-card">
+        <h2>Real-time visibility</h2>
+        <p>Monitor package movement with live status updates and estimated arrival times.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Smart alerts</h2>
+        <p>Receive proactive delivery notifications and location status for every parcel.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Dedicated support</h2>
+        <p>Access 24/7 customer support for urgent shipment questions.</p>
+      </article>
+      <article class="feature-card">
+        <h2>Professional experience</h2>
+        <p>Designed for businesses and customers who need accurate, polished tracking data.</p>
+      </article>
+    </section>
+  </div>
+
+  <footer id="support" class="footer">
+    <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
