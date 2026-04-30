@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TransitPro Shipment Details</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
   <div class="page-shell">
@@ -32,9 +34,16 @@
           <h2>Delivery timeline</h2>
           <p>Details appear here once your tracking number is validated.</p>
         </div>
+        <div class="map-card">
+          <h2>Shipment location</h2>
+          <div id="map" style="height: 300px; border-radius: 8px;"></div>
+        </div>
       </div>
 
       <div class="action-row">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: 600;">
+          <input type="checkbox" id="emailAlerts" /> Email updates for this shipment
+        </label>
         <a href="index.html" class="button secondary">Return to tracker</a>
       </div>
     </section>

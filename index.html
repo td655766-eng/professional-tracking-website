@@ -12,7 +12,8 @@
       <a class="brand" href="index.html">TransitPro</a>
       <div class="nav-links">
         <a href="#features">Features</a>
-        <a href="#support">Support</a>
+        <a href="#contact">Contact</a>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
       </div>
     </nav>
 
@@ -42,6 +43,13 @@
       </div>
     </header>
 
+    <section id="recent" class="recent-tracks">
+      <h2>Recent Tracks</h2>
+      <div id="recentList" class="recent-list">
+        <p>No recent tracks yet.</p>
+      </div>
+    </section>
+
     <section id="features" class="features">
       <article class="feature-card">
         <h2>Real-time visibility</h2>
@@ -59,6 +67,26 @@
         <h2>Professional experience</h2>
         <p>Designed for businesses and customers who need accurate, polished tracking data.</p>
       </article>
+    </section>
+
+    <section id="contact" class="contact-section">
+      <h2>Contact Support</h2>
+      <form id="contactForm" class="contact-form">
+        <div class="form-group">
+          <label for="contactName">Name</label>
+          <input id="contactName" type="text" required />
+        </div>
+        <div class="form-group">
+          <label for="contactEmail">Email</label>
+          <input id="contactEmail" type="email" required />
+        </div>
+        <div class="form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" rows="4" required></textarea>
+        </div>
+        <button type="submit">Send Message</button>
+      </form>
+      <div id="contactResult" class="contact-result"></div>
     </section>
   </div>
 

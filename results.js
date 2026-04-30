@@ -44,6 +44,72 @@ const shipments = {
       "Rescheduled for next departure"
     ],
   },
+  TRK005: {
+    status: "Out for Delivery",
+    location: "Seattle Regional Hub",
+    eta: "Today",
+    lastUpdate: "Out for delivery to your address",
+    route: [
+      "Package received at Seattle hub",
+      "Processed and sorted",
+      "Out for delivery"
+    ],
+  },
+  TRK006: {
+    status: "Returned to Sender",
+    location: "Miami Processing Center",
+    eta: "N/A",
+    lastUpdate: "Package returned due to incorrect address",
+    route: [
+      "Shipment received in Miami",
+      "Delivery attempt failed",
+      "Returned to sender"
+    ],
+  },
+  TRK007: {
+    status: "In Transit",
+    location: "Denver Sorting Facility",
+    eta: "1 business day",
+    lastUpdate: "Arrived at Denver facility",
+    route: [
+      "Package received at Denver hub",
+      "Departed Denver facility",
+      "In transit to final destination"
+    ],
+  },
+  TRK008: {
+    status: "Delivered",
+    location: "Boston Distribution",
+    eta: "Delivered",
+    lastUpdate: "Delivered to front door",
+    route: [
+      "Package received at Boston hub",
+      "Out for delivery",
+      "Delivered successfully"
+    ],
+  },
+  TRK009: {
+    status: "Processing",
+    location: "Phoenix Warehouse",
+    eta: "4 business days",
+    lastUpdate: "Awaiting customs clearance",
+    route: [
+      "Shipment label created",
+      "Awaiting customs clearance",
+      "In transit to Phoenix warehouse"
+    ],
+  },
+  TRK010: {
+    status: "Delayed",
+    location: "Atlanta Transit Hub",
+    eta: "Pending",
+    lastUpdate: "Delayed due to carrier issue",
+    route: [
+      "Shipment received in Atlanta",
+      "Delayed due to carrier issue",
+      "Rescheduled for delivery"
+    ],
+  },
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -81,5 +147,37 @@ if (!tracking) {
         ${shipment.route.map(step => `<li>${step}</li>`).join("")}
       </ul>
     </div>
+    <div class="map-card">
+      <h2>Shipment location</h2>
+      <div id="map" style="height: 300px; border-radius: 8px;"></div>
+    </div>
   `;
+
+  // Initialize map
+  const locationCoords = {
+    "Dallas Distribution Center": [32.7767, -96.7970],
+    "New York Fulfillment Hub": [40.7128, -74.0060],
+    "Los Angeles Warehouse": [34.0522, -118.2437],
+    "Chicago Transit Center": [41.8781, -87.6298],
+    "Seattle Regional Hub": [47.6062, -122.3321],
+    "Miami Processing Center": [25.7617, -80.1918],
+    "Denver Sorting Facility": [39.7392, -104.9903],
+    "Boston Distribution": [42.3601, -71.0589],
+    "Phoenix Warehouse": [33.4484, -112.0740],
+    "Atlanta Transit Hub": [33.7490, -84.3880]
+  };
+
+  const coords = locationCoords[shipment.location] || [39.8283, -98.5795]; // Default to US center
+  const map = L.map('map').setView(coords, 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+  L.marker(coords).addTo(map).bindPopup(shipment.location);
 }
+
+const emailAlerts = document.getElementById("emailAlerts");
+emailAlerts.addEventListener("change", () => {
+  if (emailAlerts.checked) {
+    alert("Email alerts enabled! You'll receive updates for this shipment.");
+  }
+});
