@@ -27,6 +27,7 @@ const shipments = {
 
 const statusResult = document.getElementById("statusResult");
 const trackingForm = document.getElementById("trackingForm");
+const trackButton = document.getElementById("trackButton");
 
 trackingForm.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -45,5 +46,12 @@ trackingForm.addEventListener("submit", function (event) {
     return;
   }
 
-  window.location.href = `results.html?tracking=${encodeURIComponent(input)}`;
+  // Show loading state
+  trackButton.classList.add("loading");
+  trackButton.disabled = true;
+
+  // Simulate database check delay
+  setTimeout(() => {
+    window.location.href = `results.html?tracking=${encodeURIComponent(input)}`;
+  }, 1000);
 });
