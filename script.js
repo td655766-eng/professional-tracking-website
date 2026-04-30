@@ -46,4 +46,4 @@ trackingForm.addEventListener("submit", function (event) {
   }
 
   window.location.href = `results.html?tracking=${encodeURIComponent(input)}`;
-}
+});
