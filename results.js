@@ -1,5 +1,5 @@
 const shipments = {
-  TRK001: {
+  PG74833857558585: {
     status: "In Transit",
     location: "Dallas Distribution Center",
     eta: "2 business days",
@@ -11,7 +11,7 @@ const shipments = {
       "Arriving at destination city soon"
     ],
   },
-  TRK002: {
+  PG92847593847582: {
     status: "Delivered",
     location: "New York Fulfillment Hub",
     eta: "Delivered",
@@ -22,7 +22,7 @@ const shipments = {
       "Delivered to recipient"
     ],
   },
-  TRK003: {
+  PG38475829384756: {
     status: "Processing",
     location: "Los Angeles Warehouse",
     eta: "3 business days",
@@ -33,7 +33,7 @@ const shipments = {
       "In transit to regional facility"
     ],
   },
-  TRK004: {
+  PG56738294857384: {
     status: "Delayed",
     location: "Chicago Transit Center",
     eta: "Pending update",
@@ -44,7 +44,7 @@ const shipments = {
       "Rescheduled for next departure"
     ],
   },
-  TRK005: {
+  PG83746592837465: {
     status: "Out for Delivery",
     location: "Seattle Regional Hub",
     eta: "Today",
@@ -55,7 +55,7 @@ const shipments = {
       "Out for delivery"
     ],
   },
-  TRK006: {
+  PG47583920847583: {
     status: "Returned to Sender",
     location: "Miami Processing Center",
     eta: "N/A",
@@ -66,7 +66,7 @@ const shipments = {
       "Returned to sender"
     ],
   },
-  TRK007: {
+  PG74829384756283: {
     status: "In Transit",
     location: "Denver Sorting Facility",
     eta: "1 business day",
@@ -77,7 +77,7 @@ const shipments = {
       "In transit to final destination"
     ],
   },
-  TRK008: {
+  PG92847583746294: {
     status: "Delivered",
     location: "Boston Distribution",
     eta: "Delivered",
@@ -88,7 +88,7 @@ const shipments = {
       "Delivered successfully"
     ],
   },
-  TRK009: {
+  PG38475920837465: {
     status: "Processing",
     location: "Phoenix Warehouse",
     eta: "4 business days",
@@ -99,7 +99,7 @@ const shipments = {
       "In transit to Phoenix warehouse"
     ],
   },
-  TRK010: {
+  PG56729384756382: {
     status: "Delayed",
     location: "Atlanta Transit Hub",
     eta: "Pending",

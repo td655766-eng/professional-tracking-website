@@ -9,7 +9,13 @@
 <body>
   <div class="page-shell">
     <nav class="site-nav">
-      <a class="brand" href="index.html">TransitPro</a>
+      <a class="brand" href="index.html">
+        <svg class="logo" viewBox="0 0 24 24" width="32" height="32">
+          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" fill="#0066ff"/>
+          <path d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="white"/>
+        </svg>
+        TransitPro
+      </a>
       <div class="nav-links">
         <a href="#features">Features</a>
         <a href="#contact">Contact</a>
@@ -28,13 +34,13 @@
         <form id="trackingForm" class="tracking-form">
           <label for="trackingInput">Tracking number</label>
           <div class="field-row">
-            <input id="trackingInput" type="text" placeholder="e.g. TRK001" autocomplete="off" />
+            <input id="trackingInput" type="text" placeholder="e.g. PG74833857558585" autocomplete="off" />
             <button type="submit" id="trackButton">
               <span id="buttonText">Track</span>
               <div id="spinner" class="spinner"></div>
             </button>
           </div>
-          <p class="hint">Valid examples: TRK001, TRK002, TRK003, TRK004</p>
+          <p class="hint">Valid examples: PG74833857558585, PG92847593847582, PG38475829384756</p>
         </form>
 
         <div id="statusResult" class="status-card">
