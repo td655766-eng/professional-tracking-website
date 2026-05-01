@@ -1,66 +1,4 @@
-const shipments = {
-  PG74833857558585: {
-    status: "In Transit",
-    location: "Dallas Distribution Center",
-    eta: "2 business days",
-    lastUpdate: "Departed Dallas sorting facility",
-  },
-  PG92847593847582: {
-    status: "Delivered",
-    location: "New York Fulfillment Hub",
-    eta: "Delivered",
-    lastUpdate: "Package delivered to recipient",
-  },
-  PG38475829384756: {
-    status: "Processing",
-    location: "Los Angeles Warehouse",
-    eta: "3 business days",
-    lastUpdate: "Label created and awaiting pickup",
-  },
-  PG56738294857384: {
-    status: "Delayed",
-    location: "Chicago Transit Center",
-    eta: "Pending update",
-    lastUpdate: "Delayed due to weather conditions",
-  },
-  PG83746592837465: {
-    status: "Out for Delivery",
-    location: "Seattle Regional Hub",
-    eta: "Today",
-    lastUpdate: "Out for delivery to your address",
-  },
-  PG47583920847583: {
-    status: "Returned to Sender",
-    location: "Miami Processing Center",
-    eta: "N/A",
-    lastUpdate: "Package returned due to incorrect address",
-  },
-  PG74829384756283: {
-    status: "In Transit",
-    location: "Denver Sorting Facility",
-    eta: "1 business day",
-    lastUpdate: "Arrived at Denver facility",
-  },
-  PG92847583746294: {
-    status: "Delivered",
-    location: "Boston Distribution",
-    eta: "Delivered",
-    lastUpdate: "Delivered to front door",
-  },
-  PG38475920837465: {
-    status: "Processing",
-    location: "Phoenix Warehouse",
-    eta: "4 business days",
-    lastUpdate: "Awaiting customs clearance",
-  },
-  PG56729384756382: {
-    status: "Delayed",
-    location: "Atlanta Transit Hub",
-    eta: "Pending",
-    lastUpdate: "Delayed due to carrier issue",
-  },
-};
-
+// DOM Elements
 const statusResult = document.getElementById("statusResult");
 const trackingForm = document.getElementById("trackingForm");
 const trackButton = document.getElementById("trackButton");
@@ -68,6 +6,9 @@ const recentList = document.getElementById("recentList");
 const themeToggle = document.getElementById("themeToggle");
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
+
+const apiHost = window.location.hostname || 'localhost';
+const apiBase = `http://${apiHost}:5000`;
 
 // Load recent tracks on page load
 function loadRecentTracks() {
@@ -115,7 +56,7 @@ trackingForm.addEventListener("submit", async function (event) {
 
   try {
     // Call backend API
-    const response = await fetch(`http://localhost:5000/api/shipments/${input}`);
+    const response = await fetch(`${apiBase}/api/shipments/${input}`);
     const shipment = await response.json();
 
     if (!response.ok) {
