@@ -1,4 +1,3 @@
-// DOM Elements
 const statusResult = document.getElementById("statusResult");
 const trackingForm = document.getElementById("trackingForm");
 const trackButton = document.getElementById("trackButton");
@@ -6,9 +5,6 @@ const recentList = document.getElementById("recentList");
 const themeToggle = document.getElementById("themeToggle");
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
-
-const apiHost = window.location.hostname || 'localhost';
-const apiBase = `http://${apiHost}:5000`;
 
 // Load recent tracks on page load
 function loadRecentTracks() {
@@ -56,7 +52,7 @@ trackingForm.addEventListener("submit", async function (event) {
 
   try {
     // Call backend API
-    const response = await fetch(`${apiBase}/api/shipments/${input}`);
+    const response = await fetch(`${API_BASE_URL}/api/shipments/${input}`);
     const shipment = await response.json();
 
     if (!response.ok) {

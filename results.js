@@ -33,9 +33,7 @@ async function loadShipmentData() {
   }
 
   try {
-    const apiHost = window.location.hostname || 'localhost';
-    const apiBase = `http://${apiHost}:5000`;
-    const response = await fetch(`${apiBase}/api/shipments/${tracking}`);
+    const response = await fetch(`${API_BASE_URL}/api/shipments/${tracking}`);
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.error || 'Tracking number not found');
