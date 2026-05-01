@@ -126,28 +126,73 @@ function renderNotFound(message) {
   `;
 }
 
-if (!tracking) {
-  renderNotFound("No tracking number provided. Please return to the tracker and enter a valid code.");
-} else if (!shipments[tracking]) {
-  renderNotFound("Tracking number not found. Please verify the code and try again.");
-} else {
-  const shipment = shipments[tracking];
+async function loadShipmentData() {
+  if (!tracking) {
+    renderNotFound("No tracking number provided. Please return to the tracker and enter a valid code.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/shipments/${tracking}`);
+    const shipment = await response.json();
+
+    if (!response.ok) {
+      throw new Error(shipment.error || 'Tracking number not found');
+    }
+
+    renderShipment(shipment);
+  } catch (error) {
+    renderNotFound(`Error loading tracking data: ${error.message}`);
+  }
+}
+
+function renderShipment(shipment) {
   resultDescription.textContent = `Latest status for ${tracking}`;
+
+  // Format route for display
+  const routeHtml = shipment.route && shipment.route.length > 0
+    ? shipment.route.map(step => `<li>${step.location || step} - ${step.status || ''}</li>`).join("")
+    : '<li>No route information available</li>';
+
   resultContent.innerHTML = `
     <div class="summary-card">
       <h2>${tracking}</h2>
       <p><strong>Status:</strong> ${shipment.status}</p>
-      <p><strong>Location:</strong> ${shipment.location}</p>
-      <p><strong>Estimated delivery:</strong> ${shipment.eta}</p>
-      <p><strong>Last update:</strong> ${shipment.lastUpdate}</p>
+      <p><strong>Current Location:</strong> ${shipment.currentLocation?.address || 'Unknown'}</p>
+      <p><strong>Estimated delivery:</strong> ${shipment.estimatedDelivery ? new Date(shipment.estimatedDelivery).toLocaleDateString() : 'TBD'}</p>
+      <p><strong>Last update:</strong> ${new Date(shipment.updatedAt || shipment.createdAt).toLocaleString()}</p>
     </div>
     <div class="timeline-card">
       <h2>Delivery timeline</h2>
       <ul>
-        ${shipment.route.map(step => `<li>${step}</li>`).join("")}
+        ${routeHtml}
       </ul>
     </div>
     <div class="map-card">
+      <h2>Package location</h2>
+      <div id="map" style="height: 300px; width: 100%;"></div>
+    </div>
+  `;
+
+  // Initialize map if coordinates are available
+  if (shipment.currentLocation?.coordinates) {
+    initializeMap(shipment.currentLocation.coordinates);
+  }
+}
+
+function initializeMap(coordinates) {
+  const map = L.map('map').setView(coordinates, 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  L.marker(coordinates).addTo(map)
+    .bindPopup('Current location')
+    .openPopup();
+}
+
+// Load data when page loads
+loadShipmentData();
       <h2>Shipment location</h2>
       <div id="map" style="height: 300px; border-radius: 8px;"></div>
     </div>

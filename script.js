@@ -97,7 +97,7 @@ themeToggle.addEventListener("click", () => {
   applyTheme(newTheme);
 });
 
-trackingForm.addEventListener("submit", function (event) {
+trackingForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   const input = document.getElementById("trackingInput").value.toUpperCase().trim();
 
@@ -107,30 +107,39 @@ trackingForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const shipment = shipments[input];
-  if (!shipment) {
-    statusResult.innerHTML = "<p>Tracking number not found. Check the code and try again.</p>";
-    statusResult.style.color = "#c92a2a";
-    return;
-  }
-
-  // Add to recent tracks
-  const recent = JSON.parse(localStorage.getItem("recentTracks") || "[]");
-  if (!recent.includes(input)) {
-    recent.unshift(input);
-    if (recent.length > 5) recent.pop();
-    localStorage.setItem("recentTracks", JSON.stringify(recent));
-    loadRecentTracks();
-  }
-
   // Show loading state
   trackButton.classList.add("loading");
   trackButton.disabled = true;
+  statusResult.innerHTML = "<p>Searching for your package...</p>";
+  statusResult.style.color = "#059669";
 
-  // Simulate database check delay
-  setTimeout(() => {
+  try {
+    // Call backend API
+    const response = await fetch(`http://localhost:5000/api/shipments/${input}`);
+    const shipment = await response.json();
+
+    if (!response.ok) {
+      throw new Error(shipment.error || 'Tracking number not found');
+    }
+
+    // Add to recent tracks
+    const recent = JSON.parse(localStorage.getItem("recentTracks") || "[]");
+    if (!recent.includes(input)) {
+      recent.unshift(input);
+      if (recent.length > 5) recent.pop();
+      localStorage.setItem("recentTracks", JSON.stringify(recent));
+      loadRecentTracks();
+    }
+
+    // Redirect to results
     window.location.href = `results.html?tracking=${encodeURIComponent(input)}`;
-  }, 1000);
+
+  } catch (error) {
+    statusResult.innerHTML = `<p>${error.message}. Please check the tracking number and try again.</p>`;
+    statusResult.style.color = "#c92a2a";
+    trackButton.classList.remove("loading");
+    trackButton.disabled = false;
+  }
 });
 
 contactForm.addEventListener("submit", function (event) {
