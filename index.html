@@ -17,11 +17,13 @@
             <button onclick="trackPackage()">Track</button>
         </div>
 
-        <div id="statusResult" class="status-card">
-            <p><strong>Customer:</strong> <span id="display_name">---</span></p>
-            <p><strong>Address:</strong> <span id="display_address">---</span></p>
-            <p><strong>Status:</strong> <span id="display_status">---</span></p>
-        </div>
+        <div id="statusResult" class="status-card" style="display: none;">
+    <p><strong>Customer:</strong> <span id="display_name">---</span></p>
+    <p><strong>Address:</strong> <span id="display_address">---</span></p>
+    <p><strong>Status:</strong> <span id="display_status">---</span></p>
+    
+    <iframe id="map-frame" width="100%" height="250" style="border:0; margin-top:15px; border-radius:12px;" src="" allowfullscreen></iframe>
+</div>
 
         <footer id="support" class="footer">
             <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
@@ -50,17 +52,33 @@
         const dbRef = ref(db);
 
         get(child(dbRef, trackingId)).then((snapshot) => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            document.getElementById('display_name').innerText = data.customer_name || 'N/A';
-            document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
-            document.getElementById('display_status').innerText = data.status || 'N/A';
-          } else {
-            alert("Invalid Tracking ID. Please check and try again.");
-          }
-        }).catch((error) => {
-          console.error("Error fetching data:", error);
-        });
+       if (snapshot.exists()) {
+        const data = snapshot.val();
+        
+        // 1. Fill in the text fields
+        document.getElementById('display_name').innerText = data.customer_name || 'N/A';
+        document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
+        document.getElementById('display_status').innerText = data.status || 'N/A';
+
+        // 2. The "Next Page" effect: Hide search, show results
+        document.querySelector('.field-row').style.display = 'none'; 
+        document.getElementById('statusResult').style.display = 'block';
+
+        // 3. Update the Map URL
+        const encodedAddress = encodeURIComponent(data.delivery_address);
+        const mapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+        
+        const mapFrame = document.getElementById('map-frame');
+        if (mapFrame) {
+            mapFrame.src = mapUrl;
+        }
+
+      } else {
+        alert("Invalid Tracking ID. Please check and try again.");
+      }
+    }).catch((error) => {
+      console.error("Error fetching data:", error);
+    });
       }
     </script>
 </body>
