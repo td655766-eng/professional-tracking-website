@@ -1,107 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TransitPro Tracking</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransitPro Express Tracking</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="page-shell">
-    <nav class="site-nav">
-      <a class="brand" href="index.html">
-        <svg class="logo" viewBox="0 0 24 24" width="32" height="32">
-          <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z" fill="#0066ff"/>
-          <path d="M10 17l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z" fill="white"/>
-        </svg>
-        TransitPro
-      </a>
-      <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#contact">Contact</a>
-        <button id="themeToggle" class="theme-toggle">🌙</button>
-      </div>
-    </nav>
 
-    <header class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow">U.S. domestic parcel tracking</span>
+    <div class="page-shell">
         <h1>TransitPro Express Tracking</h1>
-        <p>Track shipments across the United States with precise status updates and delivery visibility.</p>
-      </div>
-
-      <div class="hero-card">
-        <form id="trackingForm" class="tracking-form">
-          <label for="trackingInput">Tracking number</label>
-          <div class="field-row">
-            <input id="trackingInput" type="text" placeholder="Enter tracking number" autocomplete="off" />
-            <button type="button" id="trackButton" onclick="trackPackage()"></button>
-              <span id="buttonText">Track</span>
-              <div id="spinner" class="spinner"></div>
-            </button>
-          </div>
-        </form>
+        
+        <div class="field-row">
+            <label for="trackingInput">Tracking number</label>
+            <input type="text" id="trackingInput" placeholder="Enter ID (e.g. TRK101)">
+            <button onclick="trackPackage()">Track</button>
+        </div>
 
         <div id="statusResult" class="status-card">
-          <div id="statusResult" class="status-card">
-   <p id="display_name" style="font-weight: bold;"></p>
-   <p id="display_address"></p>
-   <p id="display_status" style="color: blue;"></p>
-</div>
+            <p><strong>Customer:</strong> <span id="display_name">---</span></p>
+            <p><strong>Address:</strong> <span id="display_address">---</span></p>
+            <p><strong>Status:</strong> <span id="display_status">---</span></p>
         </div>
-      </div>
-    </header>
 
-    <section id="recent" class="recent-tracks">
-      <h2>Recent Tracks</h2>
-      <div id="recentList" class="recent-list">
-        <p>No recent tracks yet.</p>
-      </div>
-    </section>
+        <footer id="support" class="footer">
+            <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
+        </footer>
+    </div>
 
-    <section id="features" class="features">
-      <article class="feature-card">
-        <h2>Real-time visibility</h2>
-        <p>Monitor package movement with live status updates and estimated arrival times.</p>
-      </article>
-      <article class="feature-card">
-        <h2>Smart alerts</h2>
-        <p>Receive proactive delivery notifications and location status for every parcel.</p>
-      </article>
-      <article class="feature-card">
-        <h2>Dedicated support</h2>
-        <p>Access 24/7 customer support for urgent shipment questions.</p>
-      </article>
-      <article class="feature-card">
-        <h2>Professional experience</h2>
-        <p>Designed for businesses and customers who need accurate, polished tracking data.</p>
-      </article>
-    </section>
-
-    <section id="contact" class="contact-section">
-      <h2>Contact Support</h2>
-      <form id="contactForm" class="contact-form">
-        <div class="form-group">
-          <label for="contactName">Name</label>
-          <input id="contactName" type="text" required />
-        </div>
-        <div class="form-group">
-          <label for="contactEmail">Email</label>
-          <input id="contactEmail" type="email" required />
-        </div>
-        <div class="form-group">
-          <label for="contactMessage">Message</label>
-          <textarea id="contactMessage" rows="4" required></textarea>
-        </div>
-        <button type="submit">Send Message</button>
-      </form>
-      <div id="contactResult" class="contact-result"></div>
-    </section>
-  </div>
-
-  <footer id="support" class="footer">
-    <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
-  </footer>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
       import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -126,9 +52,9 @@
         get(child(dbRef, trackingId)).then((snapshot) => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            document.getElementById('display_name').innerText = data.customer_name;
-            document.getElementById('display_address').innerText = data.delivery_address;
-            document.getElementById('display_status').innerText = data.status;
+            document.getElementById('display_name').innerText = data.customer_name || 'N/A';
+            document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
+            document.getElementById('display_status').innerText = data.status || 'N/A';
           } else {
             alert("Invalid Tracking ID. Please check and try again.");
           }
