@@ -102,44 +102,40 @@
   <footer id="support" class="footer">
     <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
   </footer>
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
-    authDomain: "packagetrackingcourierform.firebaseapp.com",
-    databaseURL: "https://packagetrackingcourierform-default-rtdb.firebaseio.com",
-    projectId: "packagetrackingcourierform",
-    storageBucket: "packagetrackingcourierform.firebasestorage.app",
-    messagingSenderId: "324365481493",
-    appId: "1:324365481493:web:4f2f81967bd9637953801c"
-  };
+      const firebaseConfig = {
+        apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
+        authDomain: "packagetrackingcourierform.firebaseapp.com",
+        databaseURL: "https://packagetrackingcourierform-default-rtdb.firebaseio.com",
+        projectId: "packagetrackingcourierform",
+        storageBucket: "packagetrackingcourierform.firebasestorage.app",
+        messagingSenderId: "324365481493",
+        appId: "1:324365481493:web:4f2f81967bd9637953801c"
+      };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase(app);
 
-  // We attach the function to 'window' so the button can find it
-  window.trackPackage = function() {
-    const trackingId = document.getElementById('trackingInput').value;
-    const dbRef = ref(db);
+      window.trackPackage = function() {
+        const trackingId = document.getElementById('trackingInput').value;
+        const dbRef = ref(db);
 
-    get(child(dbRef, trackingId)).then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        // This targets the ID you have on line 46
-        document.getElementById('statusResult').innerHTML = `
-          <div style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
-            <p><strong>Customer:</strong> ${data.customer_name}</p>
-            <p><strong>Address:</strong> ${data.delivery_address}</p>
-            <p><strong>Status:</strong> ${data.status}</p>
-          </div>
-        `;
-      } else {
-        alert("Invalid Tracking ID. Please check and try again.");
+        get(child(dbRef, trackingId)).then((snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            document.getElementById('display_name').innerText = data.customer_name;
+            document.getElementById('display_address').innerText = data.delivery_address;
+            document.getElementById('display_status').innerText = data.status;
+          } else {
+            alert("Invalid Tracking ID. Please check and try again.");
+          }
+        }).catch((error) => {
+          console.error("Error fetching data:", error);
+        });
       }
-    }).catch((error) => {
-      console.error("Error fetching data:", error);
-    });
-  }
-</script>
+    </script>
+</body>
+</html>
