@@ -35,7 +35,7 @@
           <label for="trackingInput">Tracking number</label>
           <div class="field-row">
             <input id="trackingInput" type="text" placeholder="Enter tracking number" autocomplete="off" />
-            <button type="submit" id="trackButton">
+            <button type="button" id="trackButton" onclick="trackPackage()"></button>
               <span id="buttonText">Track</span>
               <div id="spinner" class="spinner"></div>
             </button>
@@ -43,7 +43,11 @@
         </form>
 
         <div id="statusResult" class="status-card">
-          <p class="status-empty">Enter a tracking number and press Track to view details on the next page.</p>
+          <div id="statusResult" class="status-card">
+   <p id="display_name" style="font-weight: bold;"></p>
+   <p id="display_address"></p>
+   <p id="display_status" style="color: blue;"></p>
+</div>
         </div>
       </div>
     </header>
@@ -99,13 +103,10 @@
     <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
   </footer>
 
-  <script src="config.js"></script>
-  <script src="script.js"></script><script type="module">
-  // 1. These imports tell the website to use the App AND the Database
+  <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  // 2. Your exact configuration from your screen
   const firebaseConfig = {
     apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
     authDomain: "packagetrackingcourierform.firebaseapp.com",
@@ -113,27 +114,28 @@
     projectId: "packagetrackingcourierform",
     storageBucket: "packagetrackingcourierform.firebasestorage.app",
     messagingSenderId: "324365481493",
-    appId: "1:324365481493:web:4f2f81967bd9637953801c",
-    measurementId: "G-C4K2EBJCJZ"
+    appId: "1:324365481493:web:4f2f81967bd9637953801c"
   };
 
-  // 3. Initialize Firebase and the Database
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 4. The function to find the package when the customer clicks 'Track'
+  // We attach the function to 'window' so the button can find it
   window.trackPackage = function() {
     const trackingId = document.getElementById('trackingInput').value;
     const dbRef = ref(db);
 
-    // Look for the tracking ID in your database
     get(child(dbRef, trackingId)).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
-        // Update your website text with the data from Firebase
-        document.getElementById('display_name').innerText = "Name: " + data.customer_name;
-        document.getElementById('display_address').innerText = "Address: " + data.delivery_address;
-        document.getElementById('display_status').innerText = "Status: " + data.status;
+        // This targets the ID you have on line 46
+        document.getElementById('statusResult').innerHTML = `
+          <div style="padding: 10px; border: 1px solid #ccc; border-radius: 5px;">
+            <p><strong>Customer:</strong> ${data.customer_name}</p>
+            <p><strong>Address:</strong> ${data.delivery_address}</p>
+            <p><strong>Status:</strong> ${data.status}</p>
+          </div>
+        `;
       } else {
         alert("Invalid Tracking ID. Please check and try again.");
       }
@@ -142,5 +144,3 @@
     });
   }
 </script>
-</body>
-</html>
