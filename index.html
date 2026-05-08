@@ -85,7 +85,7 @@
         const encodedAddress = encodeURIComponent(data.delivery_address || '');
         const mapFrame = document.getElementById('map-frame');
         
-        if (mapFrame && data.delivery_address && data.delivery_address !== "N/A") {
+    }
   if (mapFrame && data.delivery_address && data.delivery_address !== "N/A") {
         mapFrame.src = "https://www.google.com/maps/embed/v1/place?key=" + firebaseConfig.apiKey + "&q=" + encodeURIComponent(data.delivery_address);      
         } else if (mapFrame) {
