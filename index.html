@@ -41,85 +41,86 @@
             Message sent! We'll get back to you shortly.
         </div>
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
-        authDomain: "packagetrackingcourierform.firebaseapp.com",
-        databaseURL: "https://packagetrackingcourierform-default-rtdb.firebaseio.com",
-        projectId: "packagetrackingcourierform",
-        storageBucket: "packagetrackingcourierform.firebasestorage.app",
-        messagingSenderId: "324365481493",
-        appId: "1:324365481493:web:4f2f81967bd9637953801c"
+  const firebaseConfig = {
+    apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
+    authDomain: "packagetrackingcourierform.firebaseapp.com",
+    databaseURL: "https://packagetrackingcourierform-default-rtdb.firebaseio.com",
+    projectId: "packagetrackingcourierform",
+    storageBucket: "packagetrackingcourierform.firebasestorage.app",
+    messagingSenderId: "324365481493",
+    appId: "1:324365481493:web:4f2f81967bd9637953801c",
+    measurementId: "G-C4K2EBJCJZ"
+  };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getDatabase(app);
-window.trackPackage = function() {
-    const trackingId = document.getElementById('trackingInput').value;
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.trackPackage = function() {
+    const trackingId = document.getElementById('trackingInput').value.trim();
     const dbRef = ref(db);
 
-    get(child(dbRef, "tracking/" + trackingId)).then((snapshot) => {
-        if (snapshot.exists()) {
-            const data = snapshot.val();
-            
-            // 1. Fill in the text fields
-            document.getElementById('display_name').innerText = data.customer_name || 'N/A';
-            document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
-            document.getElementById('display_status').innerText = data.status || 'N/A';
+    if (!trackingId) {
+      alert("Please enter a tracking number.");
+      return;
+    }
 
-            // 2. The "Next Page" effect: Hide search, show results
-            document.querySelector('.field-row').style.display = 'none';
-            document.getElementById('statusResult').style.display = 'block';
-            document.getElementById('extra-features').style.display = 'block';
+    // This line below was the error. It is now fixed with backticks ``
+    get(child(dbRef, `tracking/${trackingId}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        document.getElementById('display_name').innerText = data.customer_name || 'N/A';
+        document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
+        document.getElementById('display_status').innerText = data.status || 'N/A';
 
-            // 3. Update the Map URL (Your Navigation Feature)
-            const encodedAddress = encodeURIComponent(data.delivery_address || '');
-            const mapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
-            const mapFrame = document.getElementById('map-frame');
-            if (mapFrame) {
-                mapFrame.src = mapUrl;
-            }
-        } else {
-            alert("No tracking record found.");
-        }
+        document.querySelector('.field-row').style.display = 'none';
+        document.getElementById('statusResult').style.display = 'block';
+        document.getElementById('extra-features').style.display = 'block';
+
+        const encodedAddress = encodeURIComponent(data.delivery_address || '');
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${firebaseConfig.apiKey}&q=${encodedAddress}`;
+        const mapFrame = document.getElementById('map-frame');
+        if (mapFrame) { mapFrame.src = mapUrl; }
+      } else {
+        alert("No tracking record found. Please check the ID.");
+      }
     }).catch((error) => {
-        console.error("Error fetching data:", error);
+      console.error(error);
+      alert("Error accessing database.");
     });
-};
+  };
 
-window.resetSearch = function() {
+  window.resetSearch = function() {
     document.querySelector('.field-row').style.display = 'block';
     document.getElementById('statusResult').style.display = 'none';
     document.getElementById('extra-features').style.display = 'none';
     document.getElementById('trackingInput').value = '';
-};
+  };
 
-window.sendEnquiry = function() {
+  window.sendEnquiry = function() {
     const name = document.getElementById('supportName').value;
     const email = document.getElementById('supportEmail').value;
     const message = document.getElementById('supportMessage').value;
     const trackingId = document.getElementById('trackingInput').value;
 
     if (!name || !email || !message) {
-        alert("Please fill in all fields.");
-        return;
+      alert("Please fill in all fields.");
+      return;
     }
 
-    const enquiryRef = ref(db, 'enquiries');
-    const newEnquiryRef = push(enquiryRef);
-
-    set(newEnquiryRef, {
-        customer_name: name,
-        customer_email: email,
-        message: message,
-        related_tracking: trackingId,
-        timestamp: new Date().toLocaleString()
+    set(push(ref(db, 'enquiries')), {
+      customer_name: name,
+      customer_email: email,
+      message: message,
+      related_tracking: trackingId,
+      timestamp: new Date().toLocaleString()
     }).then(() => {
-        document.getElementById('contactForm').style.display = 'none';
-        document.getElementById('supportSuccess').style.display = 'block';
+      document.getElementById('contactForm').style.display = 'none';
+      document.getElementById('supportSuccess').style.display = 'block';
     });
-};
+  };
 </script>
 </body>
 </html>
