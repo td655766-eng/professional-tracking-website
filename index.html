@@ -22,12 +22,20 @@
     <p><strong>Address:</strong> <span id="display_address">---</span></p>
     <p><strong>Status:</strong> <span id="display_status">---</span></p>
     
-    <iframe id="map-frame" width="100%" height="250" style="border:0; margin-top:15px; border-radius:12px;" src="" allowfullscreen></iframe>
+   <iframe id="map-frame" width="100%" height="250" style="border:0; margin-top:15px; border-radius:12px;" src="" allowfullscreen></iframe>
+    <button onclick="resetSearch()" style="margin-top: 20px; background-color: #666; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; width: 100%;">Track Another Package</button>
 </div>
 
         <footer id="support" class="footer">
             <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
         </footer>
+    </div><div id="extra-features" class="support-container">
+        <button class="support-btn" onclick="window.location.href='mailto:support@transitpro.com'">
+            Contact Support
+        </button>
+        <div class="info-links">
+            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+        </div>
     </div>
 
     <script type="module">
@@ -72,14 +80,28 @@
         if (mapFrame) {
             mapFrame.src = mapUrl;
         }
-
-      } else {
+} else {
         alert("Invalid Tracking ID. Please check and try again.");
       }
     }).catch((error) => {
       console.error("Error fetching data:", error);
     });
-      }
+}; 
+
+// This handles the "Track Another" button
+window.resetSearch = function() {
+    // 1. Show the search input again
+    document.querySelector('.field-row').style.display = 'block';
+    
+    // 2. Hide the results, map, and support button
+    document.getElementById('statusResult').style.display = 'none';
+    
+    const extra = document.getElementById('extra-features');
+    if (extra) extra.style.display = 'none';
+    
+    // 3. Clear the input field for the next search
+    document.getElementById('trackingInput').value = '';
+};
     </script>
 </body>
 </html>
