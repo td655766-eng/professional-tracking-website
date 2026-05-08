@@ -40,7 +40,7 @@
         <div id="supportSuccess" style="display: none; color: green; margin-top: 10px; font-weight: bold;">
             Message sent! We'll get back to you shortly.
         </div>
-    <script type="module">
+   <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -67,15 +67,22 @@
       return;
     }
 
-    // This search is now "direct" - it looks for the ID exactly as it is in Firebase
     get(child(dbRef, trackingId)).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
+        
+        // Fill data
         document.getElementById('display_name').innerText = data.customer_name || 'N/A';
         document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
         document.getElementById('display_status').innerText = data.status || 'N/A';
 
-       const encodedAddress = encodeURIComponent(data.delivery_address || '');
+        // Show results
+        document.querySelector('.field-row').style.display = 'none';
+        document.getElementById('statusResult').style.display = 'block';
+        document.getElementById('extra-features').style.display = 'block';
+
+        // Map Logic
+        const encodedAddress = encodeURIComponent(data.delivery_address || '');
         const mapFrame = document.getElementById('map-frame');
         
         if (mapFrame && data.delivery_address && data.delivery_address !== "N/A") {
@@ -85,11 +92,11 @@
             mapFrame.style.display = 'none';
         }
       } else {
-        alert("ID not found in database. Please check your Firebase entry.");
+        alert("Tracking ID not found.");
       }
     }).catch((error) => {
       console.error(error);
-      alert("Connection error.");
+      alert("Error: " + error.message);
     });
   };
 
@@ -104,18 +111,11 @@
     const name = document.getElementById('supportName').value;
     const email = document.getElementById('supportEmail').value;
     const message = document.getElementById('supportMessage').value;
-    const tid = document.getElementById('trackingInput').value;
-
-    if (!name || !email || !message) {
-      alert("Please fill in all fields.");
-      return;
-    }
-
+    if (!name || !email || !message) { alert("Please fill in all fields."); return; }
     set(push(ref(db, 'enquiries')), {
       customer_name: name,
       customer_email: email,
       message: message,
-      related_tracking: tid,
       timestamp: new Date().toLocaleString()
     }).then(() => {
       document.getElementById('contactForm').style.display = 'none';
