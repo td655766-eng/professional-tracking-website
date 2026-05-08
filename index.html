@@ -67,8 +67,8 @@
       return;
     }
 
-    // This line below was the error. It is now fixed with backticks ``
-    get(child(dbRef, `tracking/${trackingId}`)).then((snapshot) => {
+    // This search is now "direct" - it looks for the ID exactly as it is in Firebase
+    get(child(dbRef, trackingId)).then((snapshot) => {
       if (snapshot.exists()) {
         const data = snapshot.val();
         document.getElementById('display_name').innerText = data.customer_name || 'N/A';
@@ -84,11 +84,11 @@
         const mapFrame = document.getElementById('map-frame');
         if (mapFrame) { mapFrame.src = mapUrl; }
       } else {
-        alert("No tracking record found. Please check the ID.");
+        alert("ID not found in database. Please check your Firebase entry.");
       }
     }).catch((error) => {
       console.error(error);
-      alert("Error accessing database.");
+      alert("Connection error.");
     });
   };
 
@@ -103,7 +103,7 @@
     const name = document.getElementById('supportName').value;
     const email = document.getElementById('supportEmail').value;
     const message = document.getElementById('supportMessage').value;
-    const trackingId = document.getElementById('trackingInput').value;
+    const tid = document.getElementById('trackingInput').value;
 
     if (!name || !email || !message) {
       alert("Please fill in all fields.");
@@ -114,7 +114,7 @@
       customer_name: name,
       customer_email: email,
       message: message,
-      related_tracking: trackingId,
+      related_tracking: tid,
       timestamp: new Date().toLocaleString()
     }).then(() => {
       document.getElementById('contactForm').style.display = 'none';
