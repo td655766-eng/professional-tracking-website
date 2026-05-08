@@ -59,7 +59,10 @@
   const db = getDatabase(app);
 
   window.trackPackage = function() {
-    const trackingId = document.getElementById('trackingInput').value.trim();
+    const trackingInput = document.getElementById('trackingInput');
+    if (!trackingInput) return;
+    
+    const trackingId = trackingInput.value.trim();
     const dbRef = ref(db);
 
     if (!trackingId) {
@@ -71,23 +74,24 @@
       if (snapshot.exists()) {
         const data = snapshot.val();
         
-        // Fill data
+        // Update display fields
         document.getElementById('display_name').innerText = data.customer_name || 'N/A';
         document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
         document.getElementById('display_status').innerText = data.status || 'N/A';
 
-        // Show results
+        // Toggle visibility
         document.querySelector('.field-row').style.display = 'none';
         document.getElementById('statusResult').style.display = 'block';
         document.getElementById('extra-features').style.display = 'block';
 
-        // Map Logic
-        const encodedAddress = encodeURIComponent(data.delivery_address || '');
+        // Map handling
+        const addr = data.delivery_address;
         const mapFrame = document.getElementById('map-frame');
         
-    }
-  if (mapFrame && data.delivery_address && data.delivery_address !== "N/A") {
-        mapFrame.src = "https://www.google.com/maps/embed/v1/place?key=" + firebaseConfig.apiKey + "&q=" + encodeURIComponent(data.delivery_address);      
+        if (mapFrame && addr && addr !== "N/A") {
+            const mapUrl = "https://www.google.com/maps/embed/v1/place?key=" + firebaseConfig.apiKey + "&q=" + encodeURIComponent(addr);
+            mapFrame.src = mapUrl;
+            mapFrame.style.display = 'block'; 
         } else if (mapFrame) {
             mapFrame.style.display = 'none';
         }
