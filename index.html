@@ -40,9 +40,9 @@
         <div id="supportSuccess" style="display: none; color: green; margin-top: 10px; font-weight: bold;">
             Message sent! We'll get back to you shortly.
         </div>
-    </div>
+    <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
