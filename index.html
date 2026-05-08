@@ -75,14 +75,15 @@
         document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
         document.getElementById('display_status').innerText = data.status || 'N/A';
 
-        document.querySelector('.field-row').style.display = 'none';
-        document.getElementById('statusResult').style.display = 'block';
-        document.getElementById('extra-features').style.display = 'block';
-
-        const encodedAddress = encodeURIComponent(data.delivery_address || '');
-        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${firebaseConfig.apiKey}&q=${encodedAddress}`;
+       const encodedAddress = encodeURIComponent(data.delivery_address || '');
         const mapFrame = document.getElementById('map-frame');
-        if (mapFrame) { mapFrame.src = mapUrl; }
+        
+        if (mapFrame && data.delivery_address && data.delivery_address !== "N/A") {
+            mapFrame.src = `https://www.google.com/maps/embed/v1/place?key=${firebaseConfig.apiKey}&q=${encodedAddress}`;
+            mapFrame.style.display = 'block'; 
+        } else if (mapFrame) {
+            mapFrame.style.display = 'none';
+        }
       } else {
         alert("ID not found in database. Please check your Firebase entry.");
       }
