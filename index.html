@@ -56,54 +56,47 @@ import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com
 
       const app = initializeApp(firebaseConfig);
       const db = getDatabase(app);
+window.trackPackage = function() {
+    const trackingId = document.getElementById('trackingInput').value;
+    const dbRef = ref(db);
 
-      window.trackPackage = function() {
-        const trackingId = document.getElementById('trackingInput').value;
-        const dbRef = ref(db);
+    get(child(dbRef, `tracking/${trackingId}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            
+            // 1. Fill in the text fields
+            document.getElementById('display_name').innerText = data.customer_name || 'N/A';
+            document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
+            document.getElementById('display_status').innerText = data.status || 'N/A';
 
-        get(child(dbRef, trackingId)).then((snapshot) => {
-       if (snapshot.exists()) {
-        const data = snapshot.val();
-        
-        // 1. Fill in the text fields
-        document.getElementById('display_name').innerText = data.customer_name || 'N/A';
-        document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
-        document.getElementById('display_status').innerText = data.status || 'N/A';
+            // 2. The "Next Page" effect: Hide search, show results
+            document.querySelector('.field-row').style.display = 'none';
+            document.getElementById('statusResult').style.display = 'block';
+            document.getElementById('extra-features').style.display = 'block';
 
-        // 2. The "Next Page" effect: Hide search, show results
-        document.querySelector('.field-row').style.display = 'none'; 
-        document.getElementById('statusResult').style.display = 'block';
-
-        // 3. Update the Map URL
-        const encodedAddress = encodeURIComponent(data.delivery_address);
-        const mapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
-        
-        const mapFrame = document.getElementById('map-frame');
-        if (mapFrame) {
-            mapFrame.src = mapUrl;
+            // 3. Update the Map URL (Your Navigation Feature)
+            const encodedAddress = encodeURIComponent(data.delivery_address || '');
+            const mapUrl = `https://maps.google.com/maps?q=${encodedAddress}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+            const mapFrame = document.getElementById('map-frame');
+            if (mapFrame) {
+                mapFrame.src = mapUrl;
+            }
+        } else {
+            alert("No tracking record found.");
         }
-} else {
-        alert("Invalid Tracking ID. Please check and try again.");
-      }
     }).catch((error) => {
-      console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error);
     });
-}; 
+};
 
-// This handles the "Track Another" button
 window.resetSearch = function() {
-    // 1. Show the search input again
     document.querySelector('.field-row').style.display = 'block';
-    
-    // 2. Hide the results, map, and support button
     document.getElementById('statusResult').style.display = 'none';
-    
-    const extra = document.getElementById('extra-features');
-    if (extra) extra.style.display = 'none';
-    
-    // 3. Clear the input field for the next search
+    document.getElementById('extra-features').style.display = 'none';
     document.getElementById('trackingInput').value = '';
-};window.sendEnquiry = function() {
+};
+
+window.sendEnquiry = function() {
     const name = document.getElementById('supportName').value;
     const email = document.getElementById('supportEmail').value;
     const message = document.getElementById('supportMessage').value;
@@ -114,7 +107,6 @@ window.resetSearch = function() {
         return;
     }
 
-    // Send data to 'enquiries' folder in Firebase
     const enquiryRef = ref(db, 'enquiries');
     const newEnquiryRef = push(enquiryRef);
 
@@ -128,8 +120,7 @@ window.resetSearch = function() {
         document.getElementById('contactForm').style.display = 'none';
         document.getElementById('supportSuccess').style.display = 'block';
     });
-}); // Closes the set function
-    }; // Closes the sendEnquiry function
+};
 </script>
 </body>
 </html>
