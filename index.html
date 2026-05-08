@@ -68,14 +68,14 @@
       if (snapshot.exists()) {
         const data = snapshot.val();
         document.getElementById('display_name').innerText = data.customer_name || 'N/A';
-        document.getElementById('display_address').innerText = data.delivery_address || 'N/A';
+        document.getElementById('display_address').innerText = data.customer_address || 'N/A';
         document.getElementById('display_status').innerText = data.status || 'N/A';
 
         document.querySelector('.field-row').style.display = 'none';
         document.getElementById('statusResult').style.display = 'block';
         document.getElementById('extra-features').style.display = 'block';
 
-        const addr = data.delivery_address;
+        const addr = data.customer_address;
         const mapFrame = document.getElementById('map-frame');
         if (mapFrame && addr && addr !== "N/A") {
             // Using a standard, reliable Google Maps link format
