@@ -79,7 +79,7 @@
         const mapFrame = document.getElementById('map-frame');
         if (mapFrame && addr && addr !== "N/A") {
             // Using a standard, reliable Google Maps link format
-            mapFrame.src = "https://www.google.com/maps/embed/v1/place?key=" + firebaseConfig.apiKey + "&q=" + encodeURIComponent(addr);
+            mapFrame.src = "https://www.google.com/maps?q=" + encodeURIComponent(addr) + "&output=embed";
             mapFrame.style.display = 'block';
         }
       } else {
