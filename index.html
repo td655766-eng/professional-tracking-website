@@ -29,16 +29,18 @@
         <footer id="support" class="footer">
             <p>TransitPro © 2026 · U.S. shipment tracking made simple</p>
         </footer>
-    </div><div id="extra-features" class="support-container">
-        <button class="support-btn" onclick="window.location.href='mailto:support@transitpro.com'">
-            Contact Support
-        </button>
-        <div class="info-links">
-            <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a>
+   <div id="extra-features" class="support-container" style="display: none;">
+        <h3>Contact Support</h3>
+        <div id="contactForm">
+            <input type="text" id="supportName" placeholder="Your Name" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <input type="email" id="supportEmail" placeholder="Your Email" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;">
+            <textarea id="supportMessage" placeholder="How can we help?" style="width: 100%; height: 80px; margin-bottom: 10px; padding: 8px; border-radius: 5px; border: 1px solid #ccc;"></textarea>
+            <button onclick="sendEnquiry()" style="background-color: #28a745; color: white; width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer;">Send Message</button>
+        </div>
+        <div id="supportSuccess" style="display: none; color: green; margin-top: 10px; font-weight: bold;">
+            Message sent! We'll get back to you shortly.
         </div>
     </div>
-
-    <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
       import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -101,6 +103,31 @@ window.resetSearch = function() {
     
     // 3. Clear the input field for the next search
     document.getElementById('trackingInput').value = '';
+};window.sendEnquiry = function() {
+    const name = document.getElementById('supportName').value;
+    const email = document.getElementById('supportEmail').value;
+    const message = document.getElementById('supportMessage').value;
+    const trackingId = document.getElementById('trackingInput').value;
+
+    if (!name || !email || !message) {
+        alert("Please fill in all fields.");
+        return;
+    }
+
+    // Send data to 'enquiries' folder in Firebase
+    const enquiryRef = ref(db, 'enquiries');
+    const newEnquiryRef = push(enquiryRef);
+
+    set(newEnquiryRef, {
+        customer_name: name,
+        customer_email: email,
+        message: message,
+        related_tracking: trackingId,
+        timestamp: new Date().toLocaleString()
+    }).then(() => {
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('supportSuccess').style.display = 'block';
+    });
 };
     </script>
 </body>
