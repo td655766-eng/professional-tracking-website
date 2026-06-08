@@ -1,8 +1,8 @@
-// API Configuration
+﻿// API Configuration
 // Update API_BASE_URL when deploying to production
 
 const getApiBase = () => {
-  const hostname = window.location.hostname;
+  const hostname = window.location.hostname || 'localhost';
   
   // Production (Netlify)
   if (hostname.includes('netlify.app')) {

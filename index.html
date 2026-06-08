@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,106 +7,42 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
     <div class="page-shell">
-        <h1>TransitPro Express Tracking</h1>
-        
-        <div class="field-row">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">TransitPro Express</p>
+                <h1>Track your shipment</h1>
+                <p>Enter a tracking number to see the latest status from our API.</p>
+            </div>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+        </header>
+
+        <form id="trackingForm" class="tracking-form">
             <label for="trackingInput">Tracking number</label>
-            <input type="text" id="trackingInput" placeholder="Enter ID (e.g. TRK101)">
-            <button onclick="trackPackage()">Track</button>
-        </div>
+            <input type="text" id="trackingInput" placeholder="Enter ID (e.g. PG74833857558585)" autocomplete="off">
+            <button type="submit" id="trackButton" class="button primary">Track package</button>
+        </form>
 
-        <div id="statusResult" class="status-card" style="display: none;">
-    <p><strong>Customer:</strong> <span id="display_name">---</span></p>
-    <p><strong>Address:</strong> <span id="display_address">---</span></p>
-    <p><strong>Status:</strong> <span id="display_status">---</span></p>
-    
-   <iframe id="map-frame" width="100%" height="250" style="border:0; margin-top:15px; border-radius:12px;" src="" allowfullscreen></iframe>
-    <button onclick="resetSearch()" style="margin-top: 20px; background-color: #666; color: white; padding: 10px; border-radius: 8px; border: none; cursor: pointer; width: 100%;">Track Another Package</button>
-</div>
+        <div id="statusResult" class="status-card"></div>
 
-   <footer id="support" class="footer">
-        <p>© TransitPro Express 2026 · U.S. Shipment tracking made simple</p>
-    </footer>
+        <section class="recent-section">
+            <h2>Recent searches</h2>
+            <div id="recentList" class="recent-list"></div>
+        </section>
 
-    <div id="extra-features" class="support-container" style="display: none;">
-        <h3>Contact Support</h3>
-        <div id="contactForm">
-            <input type="text" id="supportName" placeholder="Your Name" style="width: 100%; margin-bottom: 10px; padding: 8px;">
-            <input type="email" id="supportEmail" placeholder="Your Email" style="width: 100%; margin-bottom: 10px; padding: 8px;">
-            <textarea id="supportMessage" placeholder="How can we help?" style="width: 100%; height: 80px; margin-bottom: 10px; padding: 8px;"></textarea>
-            <button onclick="sendEnquiry()" style="background-color: #28a745; color: white; width: 100%; padding: 10px; border: none; cursor: pointer;">Send Enquiry</button>
-        </div>
-        <div id="supportSuccess" style="display: none; color: green; font-weight: bold; margin-top: 10px;">Message sent successfully!</div>
+        <section class="contact-section">
+            <h2>Contact support</h2>
+            <form id="contactForm" class="contact-form">
+                <input type="text" id="contactName" placeholder="Your name">
+                <input type="email" id="contactEmail" placeholder="Your email">
+                <textarea id="contactMessage" placeholder="How can we help?"></textarea>
+                <button type="submit" class="button secondary">Send message</button>
+            </form>
+            <div id="contactResult" class="status-card" style="display: none;"></div>
+        </section>
     </div>
-</div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, get, child, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAzoPPlCU-BC5gqU5WFRjlGgrz7UqvPVLc",
-    authDomain: "packagetrackingcourierform.firebaseapp.com",
-    databaseURL: "https://packagetrackingcourierform-default-rtdb.firebaseio.com",
-    projectId: "packagetrackingcourierform",
-    storageBucket: "packagetrackingcourierform.firebasestorage.app",
-    messagingSenderId: "324365481493",
-    appId: "1:324365481493:web:4f2f81967bd9637953801c",
-    measurementId: "G-C4K2EBJCJZ"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  window.trackPackage = function() {
-    const trackingId = document.getElementById('trackingInput').value.trim();
-    if (!trackingId) { alert("Please enter a tracking number."); return; }
-
-    get(child(ref(db), trackingId)).then((snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        document.getElementById('display_name').innerText = data.customer_name || 'N/A';
-        document.getElementById('display_address').innerText = data.customer_address || 'N/A';
-        document.getElementById('display_status').innerText = data.status || 'N/A';
-
-        document.querySelector('.field-row').style.display = 'none';
-        document.getElementById('statusResult').style.display = 'block';
-        document.getElementById('extra-features').style.display = 'block';
-
-        const addr = data.customer_address;
-        const mapFrame = document.getElementById('map-frame');
-        if (mapFrame && addr && addr !== "N/A") {
-            // Using a standard, reliable Google Maps link format
-            mapFrame.src = "https://www.google.com/maps?q=" + encodeURIComponent(addr) + "&output=embed";
-            mapFrame.style.display = 'block';
-        }
-      } else {
-        alert("Tracking ID not found.");
-      }
-    }).catch(err => alert("Error: " + err.message));
-  };
-
-  window.resetSearch = function() {
-    document.querySelector('.field-row').style.display = 'block';
-    document.getElementById('statusResult').style.display = 'none';
-    document.getElementById('extra-features').style.display = 'none';
-    document.getElementById('trackingInput').value = '';
-  };
-
-  window.sendEnquiry = function() {
-    const name = document.getElementById('supportName').value;
-    const email = document.getElementById('supportEmail').value;
-    const message = document.getElementById('supportMessage').value;
-    if (!name || !email || !message) { alert("Please fill in all fields."); return; }
-    set(push(ref(db, 'enquiries')), {
-      customer_name: name, customer_email: email, message: message, timestamp: new Date().toLocaleString()
-    }).then(() => {
-      document.getElementById('contactForm').style.display = 'none';
-      document.getElementById('supportSuccess').style.display = 'block';
-    });
-  };
-</script>
+    <script src="config.js"></script>
+    <script src="script.js"></script>
 </body>
-</html>  
+</html>
