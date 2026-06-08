@@ -1,22 +1,11 @@
 const statusResult = document.getElementById("statusResult");
 const trackingForm = document.getElementById("trackingForm");
 const trackButton = document.getElementById("trackButton");
-const recentList = document.getElementById("recentList");
 const themeToggle = document.getElementById("themeToggle");
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
 
-// Load recent tracks on page load
-function loadRecentTracks() {
-  const recent = JSON.parse(localStorage.getItem("recentTracks") || "[]");
-  if (recent.length === 0) {
-    recentList.innerHTML = "<p>No recent tracks yet.</p>";
-  } else {
-    recentList.innerHTML = recent.map(track => `<a href="results.html?tracking=${track}" class="recent-item">${track}</a>`).join("");
-  }
-}
-
-loadRecentTracks();
+// Note: recent searches removed per user preference
 
 // Theme toggle
 function applyTheme(theme) {
@@ -57,15 +46,6 @@ trackingForm.addEventListener("submit", async function (event) {
 
     if (!response.ok) {
       throw new Error(shipment.error || 'Tracking number not found');
-    }
-
-    // Add to recent tracks
-    const recent = JSON.parse(localStorage.getItem("recentTracks") || "[]");
-    if (!recent.includes(input)) {
-      recent.unshift(input);
-      if (recent.length > 5) recent.pop();
-      localStorage.setItem("recentTracks", JSON.stringify(recent));
-      loadRecentTracks();
     }
 
     // Redirect to results
