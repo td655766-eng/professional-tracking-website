@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransitPro Admin - Create Shipment</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">TransitPro Admin</p>
+        <h1>Create shipment</h1>
+        <p>Use this page only for internal shipment creation. Customers should only use the tracker page.</p>
+      </div>
+    </header>
+
+    <form id="createForm" class="contact-form">
+      <div class="form-group">
+        <label for="createCustomerName">Customer name</label>
+        <input id="createCustomerName" type="text" placeholder="Jane Doe" required />
+      </div>
+      <div class="form-group">
+        <label for="createCustomerAddress">Customer address</label>
+        <input id="createCustomerAddress" type="text" placeholder="123 Main St, City, ST" required />
+      </div>
+      <div class="form-group">
+        <label for="createStatus">Shipment status</label>
+        <input id="createStatus" type="text" placeholder="Processing" value="Processing" />
+      </div>
+      <div class="form-group">
+        <label for="createEta">Estimated delivery</label>
+        <input id="createEta" type="text" placeholder="3 business days" />
+      </div>
+      <div class="form-group">
+        <label for="createLastUpdate">Last update</label>
+        <input id="createLastUpdate" type="text" placeholder="Label created" />
+      </div>
+      <div class="form-group">
+        <label for="createRoute">Route history (one per line)</label>
+        <textarea id="createRoute" rows="4" placeholder="Shipment received\nIn transit to hub"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="createClientId">Client ID (optional)</label>
+        <input id="createClientId" type="text" placeholder="Your company id" />
+      </div>
+      <button type="submit" class="button primary">Create shipment</button>
+      <p id="createResult" class="status-empty" style="display:none; margin-top:12px;"></p>
+    </form>
+
+    <div style="margin-top: 28px;">
+      <a href="index.html" class="button secondary">Back to tracker</a>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

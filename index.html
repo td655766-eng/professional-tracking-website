@@ -23,42 +23,6 @@
             <button type="submit" id="trackButton" class="button primary">Track package</button>
         </form>
 
-        <section class="create-section">
-            <h2>Create shipment (for customers)</h2>
-            <form id="createForm" class="contact-form">
-                <div class="form-group">
-                    <label for="createCustomerName">Customer name</label>
-                    <input id="createCustomerName" type="text" placeholder="Jane Doe" />
-                </div>
-                <div class="form-group">
-                    <label for="createCustomerAddress">Customer address</label>
-                    <input id="createCustomerAddress" type="text" placeholder="123 Main St, City, ST" />
-                </div>
-                <div class="form-group">
-                    <label for="createStatus">Status</label>
-                    <input id="createStatus" type="text" placeholder="Processing" />
-                </div>
-                <div class="form-group">
-                    <label for="createEta">Estimated delivery</label>
-                    <input id="createEta" type="text" placeholder="3 business days" />
-                </div>
-                <div class="form-group">
-                    <label for="createLastUpdate">Last update</label>
-                    <input id="createLastUpdate" type="text" placeholder="Label created" />
-                </div>
-                <div class="form-group">
-                    <label for="createRoute">Route history (one per line)</label>
-                    <textarea id="createRoute" rows="3" placeholder="Shipment received\nIn transit to hub"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="createClientId">Client ID (optional)</label>
-                    <input id="createClientId" type="text" placeholder="Your company id" />
-                </div>
-                <button type="submit" class="button primary">Create shipment</button>
-                <p id="createResult" class="status-empty" style="display:none; margin-top:12px;"></p>
-            </form>
-        </section>
-
         <div id="statusResult" class="status-card"></div>
 
         <section class="contact-section">
