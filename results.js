@@ -1,10 +1,32 @@
-﻿const params = new URLSearchParams(window.location.search);
+﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+const params = new URLSearchParams(window.location.search);
 const tracking = params.get("tracking")?.toUpperCase().trim();
 const resultDescription = document.getElementById("resultDescription");
 const resultContent = document.getElementById("resultContent");
 const editSection = document.getElementById("editSection");
 const editForm = document.getElementById("editForm");
 const updateResult = document.getElementById("updateResult");
+
+// Firebase config placeholder - replace with your project settings
+const firebaseConfig = {
+  apiKey: "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://REPLACE_WITH_YOUR_PROJECT.firebaseio.com",
+  projectId: "REPLACE_WITH_YOUR_PROJECT",
+  storageBucket: "REPLACE_WITH_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "",
+  appId: ""
+};
+
+let db = null;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+} catch (e) {
+  console.warn('Firebase not initialized:', e);
+}
 
 // Map locations to coordinates
 const locationCoords = {
@@ -47,7 +69,23 @@ async function loadShipmentData() {
     renderNotFound("No tracking number provided. Please return to the tracker and enter a valid code.");
     return;
   }
+  // First, try Firebase Realtime Database (admin-created shipments)
+  if (db) {
+    try {
+      const snap = await get(ref(db, `shipments/${tracking}`));
+      if (snap && snap.exists && snap.exists()) {
+        const shipment = snap.val();
+        renderShipment(shipment);
+        populateEditForm(shipment);
+        return;
+      }
+    } catch (fbErr) {
+      console.warn('Firebase read error (falling back):', fbErr);
+      // fall through to backend
+    }
+  }
 
+  // Fallback: backend API
   try {
     const response = await fetch(`${API_BASE_URL}/api/shipments/${tracking}`);
     if (!response.ok) {
