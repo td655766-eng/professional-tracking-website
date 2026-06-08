@@ -2,6 +2,9 @@
 const tracking = params.get("tracking")?.toUpperCase().trim();
 const resultDescription = document.getElementById("resultDescription");
 const resultContent = document.getElementById("resultContent");
+const editSection = document.getElementById("editSection");
+const editForm = document.getElementById("editForm");
+const updateResult = document.getElementById("updateResult");
 
 // Map locations to coordinates
 const locationCoords = {
@@ -24,6 +27,19 @@ function renderNotFound(message) {
       <p style="color: #c92a2a;">${message}</p>
     </div>
   `;
+  if (editSection) {
+    editSection.style.display = 'none';
+  }
+}
+
+function populateEditForm(shipment) {
+  if (!shipment || !editSection) return;
+  document.getElementById("editStatus").value = shipment.status || "";
+  document.getElementById("editLocation").value = shipment.location || "";
+  document.getElementById("editEta").value = shipment.eta || "";
+  document.getElementById("editLastUpdate").value = shipment.lastUpdate || "";
+  document.getElementById("editRoute").value = shipment.route ? shipment.route.join("\n") : "";
+  editSection.style.display = 'block';
 }
 
 async function loadShipmentData() {
@@ -41,10 +57,58 @@ async function loadShipmentData() {
 
     const shipment = await response.json();
     renderShipment(shipment);
+    populateEditForm(shipment);
   } catch (error) {
     console.error('API Error:', error);
     renderNotFound(`${error.message}. Please check the tracking number and try again.`);
   }
+}
+
+if (editForm) {
+  editForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!tracking) return;
+
+    const payload = {
+      status: document.getElementById("editStatus").value.trim(),
+      location: document.getElementById("editLocation").value.trim(),
+      eta: document.getElementById("editEta").value.trim(),
+      lastUpdate: document.getElementById("editLastUpdate").value.trim(),
+      route: document.getElementById("editRoute").value
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean)
+    };
+
+    updateResult.style.display = 'none';
+    updateResult.textContent = '';
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/shipments/${tracking}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const updatedShipment = await response.json();
+      if (!response.ok) {
+        throw new Error(updatedShipment.error || 'Unable to update shipment');
+      }
+
+      renderShipment(updatedShipment);
+      populateEditForm(updatedShipment);
+
+      updateResult.textContent = 'Shipment details updated successfully.';
+      updateResult.style.color = '#059669';
+      updateResult.style.display = 'block';
+    } catch (error) {
+      updateResult.textContent = error.message;
+      updateResult.style.color = '#c92a2a';
+      updateResult.style.display = 'block';
+    }
+  });
 }
 
 function renderShipment(shipment) {

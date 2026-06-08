@@ -34,6 +34,35 @@
         </label>
         <a href="index.html" class="button secondary">Return to tracker</a>
       </div>
+
+      <section id="editSection" class="status-card" style="display: none;">
+        <h2>Edit shipment details</h2>
+        <p class="hint">Update status, location, delivery estimate, and route history.</p>
+        <form id="editForm" class="contact-form">
+          <div class="form-group">
+            <label for="editStatus">Status</label>
+            <input id="editStatus" type="text" placeholder="Enter shipment status" />
+          </div>
+          <div class="form-group">
+            <label for="editLocation">Location</label>
+            <input id="editLocation" type="text" placeholder="Enter current location" />
+          </div>
+          <div class="form-group">
+            <label for="editEta">Estimated delivery</label>
+            <input id="editEta" type="text" placeholder="Enter estimated delivery" />
+          </div>
+          <div class="form-group">
+            <label for="editLastUpdate">Last update</label>
+            <input id="editLastUpdate" type="text" placeholder="Enter last update message" />
+          </div>
+          <div class="form-group">
+            <label for="editRoute">Route history</label>
+            <textarea id="editRoute" rows="4" placeholder="One event per line"></textarea>
+          </div>
+          <button type="submit" class="button primary">Save changes</button>
+          <p id="updateResult" class="status-empty" style="display: none; margin-top: 12px;"></p>
+        </form>
+      </section>
     </section>
   </div>
 
