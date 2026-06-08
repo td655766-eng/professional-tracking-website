@@ -1,9 +1,22 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
 const statusResult = document.getElementById("statusResult");
 const trackingForm = document.getElementById("trackingForm");
 const trackButton = document.getElementById("trackButton");
 const themeToggle = document.getElementById("themeToggle");
 const contactForm = document.getElementById("contactForm");
 const contactResult = document.getElementById("contactResult");
+
+let firebaseDb = null;
+if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
+  try {
+    const app = initializeApp(window.FIREBASE_CONFIG);
+    firebaseDb = getDatabase(app);
+  } catch (e) {
+    console.warn('Unable to initialize Firebase:', e);
+  }
+}
 
 // Note: recent searches removed per user preference
 
@@ -40,6 +53,18 @@ trackingForm.addEventListener("submit", async function (event) {
   statusResult.style.color = "#059669";
 
   try {
+    if (firebaseDb) {
+      try {
+        const snap = await get(ref(firebaseDb, `shipments/${input}`));
+        if (snap && snap.exists && snap.exists()) {
+          window.location.href = `results.html?tracking=${encodeURIComponent(input)}`;
+          return;
+        }
+      } catch (fbError) {
+        console.warn('Firebase search error, falling back to backend:', fbError);
+      }
+    }
+
     // Call backend API
     const response = await fetch(`${API_BASE_URL}/api/shipments/${input}`);
     const shipment = await response.json();

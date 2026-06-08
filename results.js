@@ -1,5 +1,5 @@
 ﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, get, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 const params = new URLSearchParams(window.location.search);
 const tracking = params.get("tracking")?.toUpperCase().trim();
@@ -9,23 +9,14 @@ const editSection = document.getElementById("editSection");
 const editForm = document.getElementById("editForm");
 const updateResult = document.getElementById("updateResult");
 
-// Firebase config placeholder - replace with your project settings
-const firebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://REPLACE_WITH_YOUR_PROJECT.firebaseio.com",
-  projectId: "REPLACE_WITH_YOUR_PROJECT",
-  storageBucket: "REPLACE_WITH_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "",
-  appId: ""
-};
-
-let db = null;
-try {
-  const app = initializeApp(firebaseConfig);
-  db = getDatabase(app);
-} catch (e) {
-  console.warn('Firebase not initialized:', e);
+let firebaseDb = null;
+if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
+  try {
+    const app = initializeApp(window.FIREBASE_CONFIG);
+    firebaseDb = getDatabase(app);
+  } catch (e) {
+    console.warn('Unable to initialize Firebase:', e);
+  }
 }
 
 // Map locations to coordinates
@@ -70,9 +61,9 @@ async function loadShipmentData() {
     return;
   }
   // First, try Firebase Realtime Database (admin-created shipments)
-  if (db) {
+  if (firebaseDb) {
     try {
-      const snap = await get(ref(db, `shipments/${tracking}`));
+      const snap = await get(ref(firebaseDb, `shipments/${tracking}`));
       if (snap && snap.exists && snap.exists()) {
         const shipment = snap.val();
         renderShipment(shipment);
@@ -96,6 +87,14 @@ async function loadShipmentData() {
     const shipment = await response.json();
     renderShipment(shipment);
     populateEditForm(shipment);
+
+    if (firebaseDb) {
+      try {
+        await set(ref(firebaseDb, `shipments/${tracking}`), shipment);
+      } catch (syncErr) {
+        console.warn('Failed to sync backend record to Firebase:', syncErr);
+      }
+    }
   } catch (error) {
     console.error('API Error:', error);
     renderNotFound(`${error.message}. Please check the tracking number and try again.`);
@@ -133,6 +132,17 @@ if (editForm) {
       const updatedShipment = await response.json();
       if (!response.ok) {
         throw new Error(updatedShipment.error || 'Unable to update shipment');
+      }
+
+      if (firebaseDb) {
+        try {
+          await update(ref(firebaseDb, `shipments/${tracking}`), {
+            ...payload,
+            updatedAt: new Date().toISOString()
+          });
+        } catch (syncErr) {
+          console.warn('Failed to sync updated shipment to Firebase:', syncErr);
+        }
       }
 
       renderShipment(updatedShipment);

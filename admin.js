@@ -1,19 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// Firebase config: replace values with your Firebase project's settings
-const firebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_API_KEY",
-  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://REPLACE_WITH_YOUR_PROJECT.firebaseio.com",
-  projectId: "REPLACE_WITH_YOUR_PROJECT",
-  storageBucket: "REPLACE_WITH_YOUR_PROJECT.appspot.com",
-  messagingSenderId: "",
-  appId: ""
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+let db = null;
+if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
+  try {
+    const app = initializeApp(window.FIREBASE_CONFIG);
+    db = getDatabase(app);
+  } catch (e) {
+    console.warn('Unable to initialize Firebase:', e);
+  }
+}
 
 function generateTracking(clientId) {
   const prefix = clientId ? clientId.toString().substring(0,3).toUpperCase() : 'PG';
@@ -59,6 +55,9 @@ if (createForm) {
     };
 
     try {
+      if (!db) {
+        throw new Error('Firebase is not configured. Please add your Firebase config in config.js.');
+      }
       await set(ref(db, `shipments/${trackingNumber}`), payload);
       createResult.textContent = `Shipment created: ${trackingNumber}`;
       createResult.style.color = '#059669';

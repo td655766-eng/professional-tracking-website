@@ -20,4 +20,15 @@ const getApiBase = () => {
 
 const API_BASE_URL = getApiBase();
 
+window.API_BASE_URL = API_BASE_URL;
+window.FIREBASE_CONFIG = {
+  apiKey: "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://REPLACE_WITH_YOUR_PROJECT.firebaseio.com",
+  projectId: "REPLACE_WITH_YOUR_PROJECT",
+  storageBucket: "REPLACE_WITH_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "",
+  appId: ""
+};
+
 console.log('API Base URL:', API_BASE_URL);
