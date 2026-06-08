@@ -121,6 +121,8 @@ function renderShipment(shipment) {
   resultContent.innerHTML = `
     <div class="summary-card">
       <h2>${tracking}</h2>
+      <p><strong>Customer:</strong> ${shipment.customer_name || '---'}</p>
+      <p><strong>Address:</strong> ${shipment.customer_address || '---'}</p>
       <p><strong>Status:</strong> <span style="color: #0066ff; font-weight: bold;">${shipment.status}</span></p>
       <p><strong>Location:</strong> ${shipment.location || 'Unknown'}</p>
       <p><strong>Estimated Delivery:</strong> ${shipment.eta || 'TBD'}</p>
