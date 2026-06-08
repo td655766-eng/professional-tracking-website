@@ -1,3 +1,27 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+// Firebase config: replace values with your Firebase project's settings
+const firebaseConfig = {
+  apiKey: "REPLACE_WITH_YOUR_API_KEY",
+  authDomain: "REPLACE_WITH_YOUR_PROJECT.firebaseapp.com",
+  databaseURL: "https://REPLACE_WITH_YOUR_PROJECT.firebaseio.com",
+  projectId: "REPLACE_WITH_YOUR_PROJECT",
+  storageBucket: "REPLACE_WITH_YOUR_PROJECT.appspot.com",
+  messagingSenderId: "",
+  appId: ""
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+function generateTracking(clientId) {
+  const prefix = clientId ? clientId.toString().substring(0,3).toUpperCase() : 'PG';
+  const ts = Date.now().toString().slice(-6);
+  const rand = Math.random().toString(36).substring(2,5).toUpperCase();
+  return `${prefix}${ts}${rand}`;
+}
+
 const createForm = document.getElementById('createForm');
 const createResult = document.getElementById('createResult');
 
@@ -14,47 +38,34 @@ if (createForm) {
       .split(/\r?\n/)
       .map(line => line.trim())
       .filter(Boolean);
-    const clientId = document.getElementById('createClientId').value.trim();
+    const clientId = document.getElementById('createClientId').value.trim() || 'PG';
 
     createResult.style.display = 'none';
     createResult.textContent = '';
 
+    const trackingNumber = generateTracking(clientId);
+    const payload = {
+      trackingNumber,
+      status,
+      location: customer_address || 'Unknown',
+      eta,
+      lastUpdate,
+      route,
+      clientId,
+      customer_name,
+      customer_address,
+      createdAt: new Date().toISOString(),
+      timeline: [ { status: 'created', timestamp: new Date().toISOString() } ]
+    };
+
     try {
-      const genResp = await fetch(`${API_BASE_URL}/api/generate-tracking`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientId })
-      });
-      const genJson = await genResp.json();
-      const trackingNumber = genJson.trackingNumber;
-
-      const payload = {
-        trackingNumber,
-        status,
-        location: customer_address || 'Unknown',
-        eta,
-        lastUpdate,
-        route,
-        clientId,
-        customer_name,
-        customer_address
-      };
-
-      const resp = await fetch(`${API_BASE_URL}/api/shipments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const json = await resp.json();
-      if (!resp.ok) throw new Error(json.error || 'Create failed');
-
-      createResult.textContent = `Shipment created: ${json.trackingNumber}`;
+      await set(ref(db, `shipments/${trackingNumber}`), payload);
+      createResult.textContent = `Shipment created: ${trackingNumber}`;
       createResult.style.color = '#059669';
       createResult.style.display = 'block';
       createForm.reset();
     } catch (err) {
-      createResult.textContent = err.message;
+      createResult.textContent = err.message || 'Error writing to Firebase';
       createResult.style.color = '#c92a2a';
       createResult.style.display = 'block';
     }
