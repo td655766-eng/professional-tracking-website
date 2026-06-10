@@ -74,6 +74,94 @@
     </div>
 
     <script src="config.js"></script>
-    <script type="module" src="admin.js"></script>
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+      // Wait for config to load, then initialize Firebase
+      window.initFirebase = function() {
+        try {
+          const app = initializeApp(window.firebaseConfig);
+          window.db = getDatabase(app);
+          console.log('✓ Firebase initialized');
+        } catch (e) {
+          console.error('Firebase init error:', e.message);
+        }
+      };
+
+      // Generate tracking number
+      function generateTracking() {
+        const timestamp = Date.now().toString().slice(-5);
+        const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+        return `PG${timestamp}${random}`;
+      }
+
+      // Handle form submission
+      const form = document.getElementById('shipmentForm');
+      const resultContainer = document.getElementById('resultContainer');
+
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          resultContainer.innerHTML = '';
+          resultContainer.style.display = 'none';
+
+          const customer_name = document.getElementById('customerName').value.trim();
+          const customer_address = document.getElementById('customerAddress').value.trim();
+          const status = document.getElementById('status').value.trim();
+          const eta = document.getElementById('eta').value.trim();
+          const location = document.getElementById('location').value.trim() || customer_address;
+
+          if (!customer_name || !customer_address || !status) {
+            resultContainer.innerHTML = '<div class="error-message"><strong>Error:</strong> Please fill in all required fields.</div>';
+            resultContainer.style.display = 'block';
+            return;
+          }
+
+          const trackingNumber = generateTracking();
+          const shipmentData = {
+            trackingNumber,
+            customer_name,
+            customer_address,
+            status,
+            location,
+            eta: eta || 'TBD',
+            lastUpdate: 'Shipment created',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+
+          try {
+            if (!window.db) {
+              window.initFirebase();
+              if (!window.db) throw new Error('Firebase not initialized. Check your config.js');
+            }
+
+            await set(ref(window.db, `shipments/${trackingNumber}`), shipmentData);
+
+            resultContainer.innerHTML = `
+              <div class="success-message">
+                <p><strong>✓ Shipment created successfully!</strong></p>
+                <div class="tracking-box">
+                  <div class="tracking-label">Tracking Number</div>
+                  <div class="tracking-code">${trackingNumber}</div>
+                  <button class="copy-btn" onclick="navigator.clipboard.writeText('${trackingNumber}'); alert('Copied!')">Copy</button>
+                </div>
+                <p style="margin-top: 12px; font-size: 14px; color: #666;">Share this code with your customer to track.</p>
+              </div>
+            `;
+            resultContainer.style.display = 'block';
+            form.reset();
+          } catch (error) {
+            console.error('Error:', error);
+            resultContainer.innerHTML = `<div class="error-message"><strong>Error:</strong> ${error.message}</div>`;
+            resultContainer.style.display = 'block';
+          }
+        });
+      }
+
+      // Initialize on load
+      window.addEventListener('load', window.initFirebase);
+    </script>
 </body>
 </html>
