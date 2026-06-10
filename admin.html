@@ -1,62 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TransitPro Admin - Create Shipment</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Shipment - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container { max-width: 600px; margin: 40px auto; padding: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+        .success-message { background: #ecfdf5; border-left: 4px solid #059669; padding: 16px; border-radius: 4px; margin-top: 20px; }
+        .error-message { background: #fef2f2; border-left: 4px solid #c92a2a; padding: 16px; border-radius: 4px; margin-top: 20px; }
+        .tracking-box { background: #eff6ff; padding: 20px; border-radius: 4px; text-align: center; margin-top: 16px; }
+        .tracking-label { color: #666; font-size: 12px; margin-bottom: 8px; }
+        .tracking-code { font-family: monospace; font-size: 28px; font-weight: bold; color: #0066ff; letter-spacing: 2px; }
+        .copy-btn { background: #0066ff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 12px; font-size: 14px; }
+        .copy-btn:hover { background: #0052cc; }
+    </style>
 </head>
 <body>
-  <div class="page-shell">
-    <header class="page-header">
-      <div>
-        <p class="eyebrow">TransitPro Admin</p>
-        <h1>Create shipment</h1>
-        <p>Use this page only for internal shipment creation. Customers should only use the tracker page.</p>
-      </div>
-    </header>
+    <div class="page-shell">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">Admin</p>
+                <h1>Create a new shipment</h1>
+                <p>Enter customer details and we'll generate a tracking number</p>
+            </div>
+        </header>
 
-    <form id="createForm" class="contact-form">
-      <div class="form-group">
-        <label for="createCustomerName">Customer name</label>
-        <input id="createCustomerName" type="text" placeholder="CHRYSTAL KOMP" required />
-      </div>
-      <div class="form-group">
-        <label for="createCustomerAddress">Customer address</label>
-        <input id="createCustomerAddress" type="text" placeholder="3915 n Tacoma ave 
-Indianapolis Indiana
-46205" required />
-      </div>
-      <div class="form-group">
-        <label for="createStatus">Shipment status</label>
-        <input id="createStatus" type="text" placeholder="Processing" value="Processing" />
-      </div>
-      <div class="form-group">
-        <label for="createEta">Estimated delivery</label>
-        <input id="createEta" type="text" placeholder="3 business days" />
-      </div>
-      <div class="form-group">
-        <label for="createLastUpdate">Last update</label>
-        <input id="createLastUpdate" type="text" placeholder="Label created" />
-      </div>
-      <div class="form-group">
-        <label for="createRoute">Route history (one per line)</label>
-        <textarea id="createRoute" rows="4" placeholder="Shipment received\nIn transit to hub"></textarea>
-      </div>
-      <div class="form-group">
-        <label for="createClientId">Client ID (optional)</label>
-        <input id="createClientId" type="text" placeholder="Your company id" />
-      </div>
-      <button type="submit" class="button primary">Create shipment</button>
-      <p id="createResult" class="status-empty" style="display:none; margin-top:12px;"></p>
-    </form>
+        <div class="admin-container">
+            <form id="shipmentForm">
+                <div class="form-group">
+                    <label for="customerName">Customer name *</label>
+                    <input type="text" id="customerName" placeholder="Full name" required>
+                </div>
 
-    <div style="margin-top: 28px;">
-      <a href="index.html" class="button secondary">Back to tracker</a>
+                <div class="form-group">
+                    <label for="customerAddress">Delivery address *</label>
+                    <input type="text" id="customerAddress" placeholder="Street address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status *</label>
+                    <select id="status" required>
+                        <option value="">Select status</option>
+                        <option value="Processing">Processing</option>
+                        <option value="In Transit">In Transit</option>
+                        <option value="Out for Delivery">Out for Delivery</option>
+                        <option value="Delivered">Delivered</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Current location</label>
+                    <input type="text" id="location" placeholder="e.g. Dallas Distribution Center">
+                </div>
+
+                <div class="form-group">
+                    <label for="eta">Estimated delivery</label>
+                    <input type="text" id="eta" placeholder="e.g. 2 business days">
+                </div>
+
+                <button type="submit" class="button primary">Create Shipment</button>
+            </form>
+
+            <div id="resultContainer"></div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="index.html" class="button secondary">Back to tracker</a>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script src="config.js"></script>
-  <script type="module" src="admin.js"></script>
+    <script src="config.js"></script>
+    <script type="module" src="admin.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TransitPro Express Tracking</title>
+    <title>Package Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,30 +11,32 @@
         <header class="page-header">
             <div>
                 <p class="eyebrow">TransitPro Express</p>
-                <h1>Track your shipment</h1>
-                <p>Enter a tracking number to see the latest status.</p>
+                <h1>Track your package</h1>
+                <p>Enter your tracking number below</p>
             </div>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
         </header>
 
-        <form id="trackingForm" class="tracking-form">
+        <!-- Search Form -->
+        <form id="searchForm" class="tracking-form">
             <label for="trackingInput">Tracking number</label>
-            <input type="text" id="trackingInput" placeholder="Enter ID (e.g. PG74833857558585)" autocomplete="off">
-            <button type="submit" id="trackButton" class="button primary">Track package</button>
+            <input type="text" id="trackingInput" placeholder="Enter tracking number" autocomplete="off">
+            <button type="submit" class="button primary">Search</button>
         </form>
 
-        <div id="statusResult" class="status-card"></div>
+        <div id="message" class="status-card"></div>
 
-        <section class="contact-section">
-            <h2>Contact support</h2>
-            <form id="contactForm" class="contact-form">
-                <input type="text" id="contactName" placeholder="Your name">
-                <input type="email" id="contactEmail" placeholder="Your email">
-                <textarea id="contactMessage" placeholder="How can we help?"></textarea>
-                <button type="submit" class="button secondary">Send message</button>
-            </form>
-            <div id="contactResult" class="status-card" style="display: none;"></div>
-        </section>
+        <!-- Shipment Details (hidden until search) -->
+        <div id="shipmentDetails" style="display: none;">
+            <div class="summary-card">
+                <h2 id="trackingNumber"></h2>
+                <p><strong>Customer:</strong> <span id="customerName"></span></p>
+                <p><strong>Address:</strong> <span id="customerAddress"></span></p>
+                <p><strong>Status:</strong> <span id="status" style="color: #0066ff; font-weight: bold;"></span></p>
+                <p><strong>Location:</strong> <span id="location"></span></p>
+                <p><strong>Estimated Delivery:</strong> <span id="eta"></span></p>
+                <p><strong>Last Update:</strong> <span id="lastUpdate"></span></p>
+            </div>
+        </div>
     </div>
 
     <script src="config.js"></script>

@@ -1,72 +1,100 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+// Initialize Firebase from config.js
 let db = null;
 if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
   try {
     const app = initializeApp(window.FIREBASE_CONFIG);
     db = getDatabase(app);
   } catch (e) {
-    console.warn('Unable to initialize Firebase:', e);
+    console.warn('Firebase init error:', e.message);
   }
 }
 
-function generateTracking(clientId) {
-  const prefix = clientId ? clientId.toString().substring(0,3).toUpperCase() : 'PG';
-  const ts = Date.now().toString().slice(-6);
-  const rand = Math.random().toString(36).substring(2,5).toUpperCase();
-  return `${prefix}${ts}${rand}`;
+// Generate a unique tracking number
+function generateTracking() {
+  const timestamp = Date.now().toString().slice(-5);
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `PG${timestamp}${random}`;
 }
 
-const createForm = document.getElementById('createForm');
-const createResult = document.getElementById('createResult');
+// Copy to clipboard helper
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Tracking number copied to clipboard!');
+  }).catch(() => {
+    console.log('Fallback copy');
+  });
+}
 
-if (createForm) {
-  createForm.addEventListener('submit', async function (e) {
+const form = document.getElementById('shipmentForm');
+const resultContainer = document.getElementById('resultContainer');
+
+if (form) {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    resultContainer.style.display = 'none';
+    resultContainer.innerHTML = '';
 
-    const customer_name = document.getElementById('createCustomerName').value.trim();
-    const customer_address = document.getElementById('createCustomerAddress').value.trim();
-    const status = document.getElementById('createStatus').value.trim() || 'Processing';
-    const eta = document.getElementById('createEta').value.trim();
-    const lastUpdate = document.getElementById('createLastUpdate').value.trim();
-    const route = document.getElementById('createRoute').value
-      .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(Boolean);
-    const clientId = document.getElementById('createClientId').value.trim() || 'PG';
+    // Get form values
+    const customer_name = document.getElementById('customerName').value.trim();
+    const customer_address = document.getElementById('customerAddress').value.trim();
+    const status = document.getElementById('status').value.trim();
+    const eta = document.getElementById('eta').value.trim();
+    const location = document.getElementById('location').value.trim() || customer_address;
 
-    createResult.style.display = 'none';
-    createResult.textContent = '';
+    // Validate required fields
+    if (!customer_name || !customer_address || !status) {
+      resultContainer.innerHTML = '<div class="error-box"><strong>Error:</strong> Please fill in all required fields.</div>';
+      resultContainer.style.display = 'block';
+      return;
+    }
 
-    const trackingNumber = generateTracking(clientId);
-    const payload = {
+    // Generate tracking number
+    const trackingNumber = generateTracking();
+
+    // Build shipment data
+    const shipmentData = {
       trackingNumber,
-      status,
-      location: customer_address || 'Unknown',
-      eta,
-      lastUpdate,
-      route,
-      clientId,
       customer_name,
       customer_address,
+      status,
+      location,
+      eta: eta || 'TBD',
+      lastUpdate: 'Shipment created',
       createdAt: new Date().toISOString(),
-      timeline: [ { status: 'created', timestamp: new Date().toISOString() } ]
+      updatedAt: new Date().toISOString()
     };
 
     try {
       if (!db) {
-        throw new Error('Firebase is not configured. Please add your Firebase config in config.js.');
+        throw new Error('Firebase not configured. Check config.js');
       }
-      await set(ref(db, `shipments/${trackingNumber}`), payload);
-      createResult.textContent = `Shipment created: ${trackingNumber}`;
-      createResult.style.color = '#059669';
-      createResult.style.display = 'block';
-      createForm.reset();
-    } catch (err) {
-      createResult.textContent = err.message || 'Error writing to Firebase';
-      createResult.style.color = '#c92a2a';
-      createResult.style.display = 'block';
+
+      // Save to Firebase
+      await set(ref(db, `shipments/${trackingNumber}`), shipmentData);
+
+      // Show success with tracking number
+      resultContainer.innerHTML = `
+        <div class="success-box">
+          <strong>✓ Shipment created successfully!</strong>
+          <div class="tracking-display">
+            <div class="label">Tracking Number</div>
+            <div class="code">${trackingNumber}</div>
+            <div class="hint">Share this code with your customer to track the shipment</div>
+            <button type="button" class="copy-btn" onclick="navigator.clipboard.writeText('${trackingNumber}'); alert('Copied!')">Copy to clipboard</button>
+          </div>
+        </div>
+      `;
+      resultContainer.style.display = 'block';
+
+      // Reset form
+      form.reset();
+    } catch (error) {
+      resultContainer.innerHTML = `<div class="error-box"><strong>Error:</strong> ${error.message}</div>`;
+      resultContainer.style.display = 'block';
+      console.error('Firebase error:', error);
     }
   });
 }
