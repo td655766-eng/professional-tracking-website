@@ -3,9 +3,9 @@ import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.8.0
 
 // Initialize Firebase from config.js
 let db = null;
-if (window.FIREBASE_CONFIG && window.FIREBASE_CONFIG.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
+if (window.firebaseConfig && window.firebaseConfig.apiKey !== "REPLACE_WITH_YOUR_API_KEY") {
   try {
-    const app = initializeApp(window.FIREBASE_CONFIG);
+    const app = initializeApp(window.firebaseConfig);
     db = getDatabase(app);
   } catch (e) {
     console.warn('Firebase init error:', e.message);

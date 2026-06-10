@@ -2,8 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebas
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 // Initialize Firebase
-const app = initializeApp(window.firebaseConfig);
-const db = getDatabase(app);
+let db = null;
+try {
+  const app = initializeApp(window.firebaseConfig);
+  db = getDatabase(app);
+  console.log('✓ Firebase initialized successfully');
+} catch (error) {
+  console.error('✗ Firebase error:', error.message);
+}
 
 const searchForm = document.getElementById('searchForm');
 const trackingInput = document.getElementById('trackingInput');
@@ -27,6 +33,10 @@ searchForm.addEventListener('submit', async (e) => {
   shipmentDetails.style.display = 'none';
 
   try {
+    if (!db) {
+      throw new Error('Firebase not initialized. Check your config.js');
+    }
+
     // Get shipment from Firebase
     const snapshot = await get(ref(db, `shipments/${trackingNumber}`));
     
@@ -35,13 +45,13 @@ searchForm.addEventListener('submit', async (e) => {
       displayShipment(trackingNumber, shipment);
       message.style.display = 'none';
     } else {
-      message.innerHTML = '<p style="color: #c92a2a;">Tracking number not found</p>';
+      message.innerHTML = '<p style="color: #c92a2a;">Tracking number not found. Try creating one from admin.html first.</p>';
       message.style.display = 'block';
       shipmentDetails.style.display = 'none';
     }
   } catch (error) {
-    console.error('Error:', error);
-    message.innerHTML = '<p style="color: #c92a2a;">Error searching. Please try again.</p>';
+    console.error('Search error:', error);
+    message.innerHTML = `<p style="color: #c92a2a;">Error: ${error.message}</p>`;
     message.style.display = 'block';
     shipmentDetails.style.display = 'none';
   }
